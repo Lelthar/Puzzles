@@ -97,3 +97,59 @@
 		(#t #f)
 	)	
 )
+
+(define (posicion1 x y matriz largo palabra)
+	(cond 
+		((string-null? palabra) #t)
+		((or (eq? '@ (elementoPosicionXY x y matriz)) (eq? (carStr palabra) (elementoPosicionXY x y matriz))) (posicion1 (sub1 x) (add1 y) matriz (sub1 largo) (cdrStr palabra)))
+		(#t #f)
+	)	
+)
+
+(define (posicion2 x y matriz largo palabra)
+	(cond 
+		((string-null? palabra) #t)
+		((or (eq? '@ (elementoPosicionXY x y matriz)) (eq? (carStr palabra) (elementoPosicionXY x y matriz))) (posicion2 x (add1 y) matriz (sub1 largo) (cdrStr palabra)))
+		(#t #f)
+	)	
+)
+
+(define (posicion3 x y matriz largo palabra)
+	(cond 
+		((string-null? palabra) #t)
+		((or (eq? '@ (elementoPosicionXY x y matriz)) (eq? (carStr palabra) (elementoPosicionXY x y matriz))) (posicion3 (add1 x) (add1 y) matriz (sub1 largo) (cdrStr palabra)))
+		(#t #f)
+	)	
+)
+
+(define (posicion4 x y matriz largo palabra)
+	(cond 
+		((string-null? palabra) #t)
+		((or (eq? '@ (elementoPosicionXY x y matriz)) (eq? (carStr palabra) (elementoPosicionXY x y matriz))) (posicion4 (add1 x) y matriz (sub1 largo) (cdrStr palabra)))
+		(#t #f)
+	)	
+)
+
+(define (posicion5 x y matriz largo palabra)
+	(cond 
+		((string-null? palabra) #t)
+		((or (eq? '@ (elementoPosicionXY x y matriz)) (eq? (carStr palabra) (elementoPosicionXY x y matriz))) (posicion5 (add1 x) (sub1 y) matriz (sub1 largo) (cdrStr palabra)))
+		(#t #f)
+	)	
+)
+
+(define (posicion6 x y matriz largo palabra)
+	(cond 
+		((string-null? palabra) #t)
+		((or (eq? '@ (elementoPosicionXY x y matriz)) (eq? (carStr palabra) (elementoPosicionXY x y matriz))) (posicion6 x (sub1 y) matriz (sub1 largo) (cdrStr palabra)))
+		(#t #f)
+	)	
+)
+
+(define (posicion7 x y matriz largo palabra)
+	(cond 
+		((string-null? palabra) #t)
+		((or (eq? '@ (elementoPosicionXY x y matriz)) (eq? (carStr palabra) (elementoPosicionXY x y matriz))) (posicion7 (sub1 x) (sub1 y) matriz (sub1 largo) (cdrStr palabra)))
+		(#t #f)
+	)	
+)
