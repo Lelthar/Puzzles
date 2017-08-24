@@ -1,4 +1,4 @@
-; (load "/home/gerald/Documents/Lenguajes-de-Programacion/Tarea-Mediana/Puzzles-Morales-Gerald.scm")
+; (load "/home/gerald/Documents/gitHub/PuzzlesProyecto/Puzzles/Puzzles-Morales-Gerald.scm")
 
 (require-extension srfi-13)
 
