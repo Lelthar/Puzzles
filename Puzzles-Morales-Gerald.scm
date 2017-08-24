@@ -71,6 +71,9 @@
 	(substring palabra 1 (string-length palabra))
 )
 
+(define (carStr palabra)
+	(substring palabra 0 1)
+)
 ;-----------------------------------------------------------------------------------------
 
 ;Esta funcion retorna #t o #f dependiendo si una palabra se puede poner en la matriz
@@ -90,7 +93,7 @@
 (define (posicion0 x y matriz largo palabra)
 	(cond 
 		((string-null? palabra) #t)
-		((eq? ))
-
+		((or (eq? '@ (elementoPosicionXY x y matriz)) (eq? (carStr palabra) (elementoPosicionXY x y matriz))) (posicion0 (sub1 x) y matriz (sub1 largo) (cdrStr palabra)))
+		(#t #f)
 	)	
 )
