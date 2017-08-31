@@ -2,6 +2,14 @@
 
 (require-extension srfi-13)
 
+; La sopa de letras silvestre lista, funcion de generar se llama generarSopaLetras y recibe X y Y y una lista de palabras
+; la funcion de resolver se llama 
+;
+;
+;
+;
+
+
 ;Usar
 ;Esta funcion genera una matriz X x Y de elementos @ 
 (define (generarMatriz x y)
@@ -81,6 +89,11 @@
 		((zero? valor) (carStr palabra))
 		(#t (stringPosicion (cdrStr palabra) (sub1 valor)))
 	)
+)
+
+;devuelve una lista con un x y y, que le pasen
+(define (agregarXY x y)
+	(cons x (cons y '()))
 )
 ;-----------------------------------------------------------------------------------------
 ;--------------------------------- Funciones del puzzle 1 --------------------------------
@@ -289,14 +302,151 @@
 		(#t (cons (car fila)(llenarMatrizFila (cdr fila) palabra (sub1 largo))))
 	) 
 )
-;(llenarMatrizFila '(@ @ "h" @ @) "holamundocasa" 5)
+
+;Crea la sopa de letras
 (define (generarSopaLetras x y listaPalabras)
 	(llenarMatriz (agregarPalabras (generarMatriz x y) listaPalabras) listaPalabras)
 )
 
-(("o" "a" "n" "a" "c") 
- ("m" "a" "l" "a" "l") 
- ("u" "n" "s" "o" "h") 
- ("d" "a" "l" "m" "h") 
- ("o" "l" "a" "a" "l"))
+(define (revisarPalabra? x y matriz largo palabra posicion)
+	(cond
+		((and (= posicion 0) (>= (- x (sub1 largo)) 0)) (revisarPalabraPosicion0 x y matriz largo palabra '()))
+		((and (= posicion 1) (>= (- x (sub1 largo)) 0) (< (+ y (sub1 largo)) (length (car matriz)))) (revisarPalabraPosicion1 x y matriz largo palabra '()))
+		((and (= posicion 2) (< (+ y (sub1 largo)) (length (car matriz)))) (revisarPalabraPosicion2 x y matriz largo palabra '()))
+		((and (= posicion 3) (< (+ x (sub1 largo)) (length matriz)) (< (+ y (sub1 largo)) (length (car matriz)))) (revisarPalabraPosicion3 x y matriz largo palabra '()))
+		((and (= posicion 4) (< (+ x (sub1 largo)) (length matriz))) (revisarPalabraPosicion4 x y matriz largo palabra '()))
+		((and (= posicion 5) (< (+ x (sub1 largo)) (length matriz)) (>= (- y (sub1 largo)) 0)) (revisarPalabraPosicion5 x y matriz largo palabra '()))
+		((and (= posicion 6) (>= (- y (sub1 largo)) 0)) (revisarPalabraPosicion6 x y matriz largo palabra '()))
+		((and (= posicion 7) (>= (- x (sub1 largo)) 0) (>= (- y (sub1 largo)) 0)) (revisarPalabraPosicion7 x y matriz largo palabra '()))
+		(#t '())
+	)
+)
+
+(define (revisarPalabraPosicion0 x y matriz largo palabra resultado)
+	(cond 
+		((zero? largo) resultado)
+		((equal? (elementoPosicionXY x y matriz) (carStr palabra)) (revisarPalabraPosicion0 (sub1 x) y matriz (sub1 largo) (cdrStr palabra) (cons (agregarXY x y) resultado)))
+		(#t '())
+	)
+)
+
+(define (revisarPalabraPosicion1 x y matriz largo palabra resultado)
+	(cond 
+		((zero? largo) resultado)
+		((equal? (elementoPosicionXY x y matriz) (carStr palabra)) (revisarPalabraPosicion1 (sub1 x) (add1 y) matriz (sub1 largo) (cdrStr palabra) (cons (agregarXY x y) resultado)))
+		(#t '())
+	)
+)
+
+(define (revisarPalabraPosicion2 x y matriz largo palabra resultado)
+	(cond 
+		((zero? largo) resultado)
+		((equal? (elementoPosicionXY x y matriz) (carStr palabra)) (revisarPalabraPosicion2 x (add1 y) matriz (sub1 largo) (cdrStr palabra) (cons (agregarXY x y) resultado)))
+		(#t '())
+	)
+)
+
+(define (revisarPalabraPosicion3 x y matriz largo palabra resultado)
+	(cond 
+		((zero? largo) resultado)
+		((equal? (elementoPosicionXY x y matriz) (carStr palabra)) (revisarPalabraPosicion3 (add1 x) (add1 y) matriz (sub1 largo) (cdrStr palabra) (cons (agregarXY x y) resultado)))
+		(#t '())
+	)
+)
+
+(define (revisarPalabraPosicion4 x y matriz largo palabra resultado)
+	(cond 
+		((zero? largo) resultado)
+		((equal? (elementoPosicionXY x y matriz) (carStr palabra)) (revisarPalabraPosicion4 (add1 x) y matriz (sub1 largo) (cdrStr palabra) (cons (agregarXY x y) resultado)))
+		(#t '())
+	)
+)
+
+(define (revisarPalabraPosicion5 x y matriz largo palabra resultado)
+	(cond 
+		((zero? largo) resultado)
+		((equal? (elementoPosicionXY x y matriz) (carStr palabra)) (revisarPalabraPosicion5 (add1 x) (sub1 y) matriz (sub1 largo) (cdrStr palabra) (cons (agregarXY x y) resultado)))
+		(#t '())
+	)
+)
+
+(define (revisarPalabraPosicion6 x y matriz largo palabra resultado)
+	(cond 
+		((zero? largo) resultado)
+		((equal? (elementoPosicionXY x y matriz) (carStr palabra)) (revisarPalabraPosicion6 x (sub1 y) matriz (sub1 largo) (cdrStr palabra) (cons (agregarXY x y) resultado)))
+		(#t '())
+	)
+)
+
+(define (revisarPalabraPosicion7 x y matriz largo palabra resultado)
+	(cond 
+		((zero? largo) resultado)
+		((equal? (elementoPosicionXY x y matriz) (carStr palabra)) (revisarPalabraPosicion7 (sub1 x) (sub1 y) matriz (sub1 largo) (cdrStr palabra) (cons (agregarXY x y) resultado)))
+		(#t '())
+	)
+)
+
+(define (evaluarElementoMatriz x y matriz largo palabra contador resultado)
+	(cond
+		((zero? contador) resultado)
+		((null? resultado) (evaluarElementoMatriz x y matriz largo palabra (sub1 contador) (revisarPalabra? x y matriz largo palabra (sub1 contador))))
+		(#t  resultado)
+	)
+)
+
+(define (evaluarMatriz matriz palabra x resultado)
+	(cond
+		((zero? x) 
+			(cond
+				((> (length resultado) 0) (reverse (cons palabra resultado)))
+				(#t (cons palabra '()))
+			))
+		((null? resultado) (evaluarMatriz matriz palabra (sub1 x) (evaluarFila matriz palabra (sub1 x) (length (car matriz)) resultado)))
+		(#t (reverse(cons palabra resultado)))
+	)
+)
+
+(define (evaluarFila matriz palabra x y resultado)
+	(cond
+		((zero? y) resultado)
+		((null? resultado) (evaluarFila matriz palabra x (sub1 y) (evaluarElementoMatriz x (sub1 y) matriz (string-length palabra) palabra 8 '())))
+		(#t resultado)
+	)
+)
+
+;Resuelve una sopa de letras
+(define (resolverSopaLetras matriz palabras)
+	(cond
+		((null? palabras) '())
+		(#t (cons  (evaluarMatriz matriz (car palabras) (length matriz) '()) (resolverSopaLetras matriz (cdr palabras))))
+	)
+)
+
+
+; Pruebas
+; (generarSopaLetras 5 5 '("caja" "pala" "pato" "lana"))
+; (resolverSopaLetras '(("a" "a" "l" "a" "p") ("a" "c" "n" "a" "p") ("c" "a" "j" "a" "t") ("o" "l" "t" "a" "l") ("a" "o" "a" "a" "a")) '("caja" "pala" "pato" "lana"))
+;
+; (("a" "a" "l" "a" "p") 
+;  ("a" "c" "n" "a" "p") 
+;  ("c" "a" "j" "a" "t") 
+;  ("o" "l" "t" "a" "l") 
+;  ("a" "o" "a" "a" "a"))
+;
+;(((2 0) (2 1) (2 2) (2 3) "caja") ((0 4) (0 3) (0 2) (0 1) "pala") ((1 4) (2 3) (3 2) (4 1) "pato") ((3 4) (2 3) (1 2) (0 1) "lana"))
+
+
+;----------------------------------------------------------------------------------------------------------------------
+;-------------------------------------------------Sopa de letras Azura-------------------------------------------------
+;----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
