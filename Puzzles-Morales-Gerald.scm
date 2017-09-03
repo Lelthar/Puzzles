@@ -3,8 +3,8 @@
 (require-extension srfi-13)
 
 ; La sopa de letras silvestre lista, funcion de generar se llama generarSopaLetras y recibe X y Y y una lista de palabras
-; la funcion de resolver se llama 
-;
+; la funcion de resolver se llama (resolverSopaLetras matriz listaPalabras) la matriz es la matriz a resolver y la lista de palabras que se van a buscar
+; Para revisar si tiene solucion la funcion se llama (revisarSolucionSopaLetrasS matriz palabras)
 ;
 ;
 ;
@@ -99,8 +99,6 @@
 ;--------------------------------- Funciones del puzzle 1 --------------------------------
 ;-----------------------------------------------------------------------------------------
 
-;prueba (colocarPalabra? 1 0 '((@ @ @ @ @) (@ @ @ @ @) (@ "o" @ @ @) (@ @ @ @ @) (@ @ @ @ @)) 4 "hola" 3)
-;(posicion3 1 0 '((@ @ @ @ @) ("h" @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @)) 4 "hola")
 
 ;Esta funcion retorna #t o #f dependiendo si una palabra se puede poner en la matriz
 (define (colocarPalabra? x y matriz largo palabra posicion)
@@ -205,9 +203,6 @@
 	)
 )
 
-;(colocarPalabra? (random (length '((@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @)))) (random (length (car '((@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @))))) '((@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @)) (string-length "hola") "hola" 3)
-;(agregarPalabraMatriz '((@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @)) "hola" 10 3 1 2)
-;(agregarPalabras '((@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @) (@ @ @ @ @)) '("hola" "mudo" "casa" "cazar"))
 
 (define (insertarPalabra x y matriz largo palabra posicion)
 	(cond
@@ -422,17 +417,119 @@
 	)
 )
 
+;Revisa si una matriz tiene solucion
+(define (revisarSolucionSopaLetrasS matriz palabras)
+	(revisarSolucionSopaLetrasSAux (resolverSopaLetras matriz palabras))
+)
+
+(define (revisarSolucionSopaLetrasSAux listaSolucion)
+	(cond
+		((null? listaSolucion) #t)
+		((= (length (car listaSolucion)) 1) #f)
+		(#t (revisarSolucionSopaLetrasSAux (cdr listaSolucion)))
+	)
+)
+
+
+;(generarSopaLetras x y listaPalabras)
+;(resolverSopaLetras matriz palabras)
+;(revisarSolucionSopaLetrasS matriz palabras)
+;
+;(revisarSolucionSopaLetrasS '(("u" "m" "u" "n" "d" "o") ("a" "s" "a" "c" "h" "l") ("a" "n" "a" "o" "a" "z") ("z" "n" "l" "z" "h" "a") ("s" "a" "o" "m" "a" "o")) '("hola" "casa" "mundo" "lazo"))
+;(resolverSopaLetras '(("u" "m" "u" "n" "d" "o") ("a" "s" "a" "c" "h" "l") ("a" "n" "a" "o" "a" "z") ("z" "n" "l" "z" "h" "a") ("s" "a" "o" "m" "a" "o")) '("hola" "casa" "mundo" "lazo"))
+;(("u" "m" "u" "n" "d" "o") ("a" "s" "a" "c" "h" "l") ("a" "n" "a" "o" "a" "z") ("z" "n" "l" "z" "h" "a") ("s" "a" "o" "m" "a" "o"))
+;(((1 4) (2 3) (3 2) (4 1) "hola") ((1 3) (1 2) (1 1) (1 0) "casa") ((0 1) (0 2) (0 3) (0 4) (0 5) "mundo") ((1 5) (2 4) (3 3) (4 2) "lazo"))
+
 ;----------------------------------------------------------------------------------------------------------------------
 ;-------------------------------------------------Sopa de letras Azura-------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------
 
+(define (aumentarX x posicion)
+	(cond
+		((= posicion 0) (- x 2))
+		((= posicion 1) (- x 2))
+		((= posicion 2) (- x 1))
+		((= posicion 3) (+ x 1))
+		((= posicion 4) (+ x 2))
+		((= posicion 5) (+ x 2))
+		((= posicion 6) (- x 1))
+		((= posicion 7) (+ x 1))
+	)
+)
 
+(define (reducirX x posicion)
+	(cond
+		((= posicion 0) (+ x 2))
+		((= posicion 1) (+ x 2))
+		((= posicion 2) (+ x 1))
+		((= posicion 3) (- x 1))
+		((= posicion 4) (- x 2))
+		((= posicion 5) (- x 2))
+		((= posicion 6) (+ x 1))
+		((= posicion 7) (- x 1))
+	)
+)
 
+(define (aumentarY y posicion)
+	(cond
+		((= posicion 0) (- y 1))
+		((= posicion 1) (+ y 1))
+		((= posicion 2) (+ y 2))
+		((= posicion 3) (+ y 2))
+		((= posicion 4) (+ y 1))
+		((= posicion 5) (- y 1))
+		((= posicion 6) (- y 2))
+		((= posicion 7) (- y 2))
+	)
+)
 
+(define (reducirY y posicion)
+	(cond
+		((= posicion 0) (+ y 1))
+		((= posicion 1) (- y 1))
+		((= posicion 2) (- y 2))
+		((= posicion 3) (- y 2))
+		((= posicion 4) (- y 1))
+		((= posicion 5) (+ y 1))
+		((= posicion 6) (+ y 2))
+		((= posicion 7) (+ y 2))
+	)
+)
 
+(define (sePuedeColocar? x y largoX largoY posicion palabra contador matriz)
+	(cond
+		((and  (= posicion 0) (>= (- x 2) 0) (>= (- y 1) 0) (or (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) (stringPosicion palabra contador)) (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) '@))) #t)
+		((and  (= posicion 1) (>= (- x 2) 0) (< (+ y 1) largoY) (or (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) (stringPosicion palabra contador)) (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) '@))) #t)
+		((and  (= posicion 2) (>= (- x 1) 0) (< (+ y 2) largoY) (or (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) (stringPosicion palabra contador)) (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) '@))) #t)
+		((and  (= posicion 3) (< (+ x 1) largoX) (< (+ y 2) largoY) (or (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) (stringPosicion palabra contador)) (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) '@))) #t)
+		((and  (= posicion 4) (< (+ x 2) largoX) (< (+ y 1) largoY) (or (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) (stringPosicion palabra contador)) (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) '@))) #t)
+		((and  (= posicion 5) (< (+ x 2) 0) (>= (- y 1) 0) (or (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) (stringPosicion palabra contador)) (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) '@))) #t)
+		((and  (= posicion 6) (>= (- x 1) 0) (>= (- y 2) 0) (or (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) (stringPosicion palabra contador)) (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) '@))) #t)
+		((and  (= posicion 7) (< (+ x 1) largoX) (>= (- y 2) 0) (or (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) (stringPosicion palabra contador)) (equal? (elementoPosicionXY (aumentarX x posicion) (aumentarY y posicion) matriz) '@))) #t)
+		(#t #f)
+	)
+)
 
+(define (colocarPalabraSopaLetrasL x y palabra veces posicion matriz contador matrizNueva)
+	(cond
+		((= contador (string-length palabra)) matrizNueva)
+		((zero? veces) matriz)
+		((and (or (equal? (elementoPosicionXY x y matrizNueva) (stringPosicion palabra contador)) (equal? (elementoPosicionXY x y matrizNueva) '@) ) (= (sub1 (string-length palabra)) contador)) (colocarPalabraSopaLetrasL (aumentarX x posicion) (aumentarY y posicion) palabra 200 (random 8) matriz (add1 contador) (remplazarAtom x y (stringPosicion palabra contador) matrizNueva)))
+		((and (or (equal? (elementoPosicionXY x y matrizNueva) (stringPosicion palabra contador)) (equal? (elementoPosicionXY x y matrizNueva) '@) ) (sePuedeColocar? x y (length matrizNueva) (length (car matrizNueva)) posicion palabra (add1 contador) matriz) ) (colocarPalabraSopaLetrasL (aumentarX x posicion) (aumentarY y posicion) palabra 200 (random 8) matriz (add1 contador) (remplazarAtom x y (stringPosicion palabra contador) matrizNueva)))
+		(#t  (colocarPalabraSopaLetrasL x y palabra (sub1 veces) (random 8) matriz contador matrizNueva))
+	)
+)
 
+(define (colocarPalabrasSopaLetrasL ))
 
+;(remplazarAtom x y (carStr palabra) matriz)
+;(agregarPalabraSopaL '((@ @ "a" @ @) (@ @ @ @ "s") (@ @ "a" "c" @) (@ @ @ @ @) (@ @ @ @ @)) '((0 3) (1 1) (0 3) (2 4)) "hola")
+;(generarMatriz 5 5)
+;(colocarPalabraSopaLetrasL 4 0 "mono" 100 2 '((@ @ "s" "o" @) (@ "t" @ "o" "a") (@ "l" "c" "a" @) (@ @ @ "a" "h") (@ @ "p" @ @)) 0 '((@ @ "s" "o" @) (@ "t" @ "o" "a") (@ "l" "c" "a" @) (@ @ @ "a" "h") (@ @ "p" @ @)))
+;
 
-
+;((@ @ "s" @ @) (@ @ @ @ "a") (@ @ "c" @ @) (@ @ @ @ @) (@ @ @ @ @))
+;((@ @ "s" @ @) (@ @ @ "o" "a") (@ "l" "c" @ @) (@ @ @ "a" "h") (@ @ @ @ @))
+;((@ @ "s" "o" @) (@ "t" @ "o" "a") (@ "l" "c" "a" @) (@ @ @ "a" "h") (@ @ "p" @ @))
+;((@ @ "s" "o" @) (@ "t" @ "o" "a") ("n" "l" "c" "a" @) (@ @ "o" "a" "h") ("m" @ "p" @ @))
 
